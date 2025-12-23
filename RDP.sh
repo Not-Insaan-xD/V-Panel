@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 clear
@@ -24,14 +25,13 @@ EOF
 echo -e "${RESET}"
 echo "--------------------------------------------------"
 echo
-echo "1. RDP Setup"
+echo "1. RDP Setup (XFCE - Fast)"
 echo "0. Exit"
 echo
 echo "Press Ctrl + C anytime to stop"
 echo
 
 read -p "Select option: " opt
-
 [ "$opt" != "1" ] && exit 0
 
 # ---------- FUNCTIONS ----------
@@ -87,12 +87,15 @@ hide systemctl start tailscaled
 loader "Connecting to Tailscale"
 hide tailscale up --authkey="$TS_KEY" --hostname=Insaan-RDP
 
-# ---------- RDP ----------
-loader "Installing Desktop + XRDP"
-hide apt install -y ubuntu-desktop-minimal xrdp dbus-x11
+# ---------- XFCE + XRDP ----------
+loader "Installing XFCE Desktop + XRDP"
+hide apt install -y xfce4 xfce4-goodies xrdp dbus-x11
 
 hide systemctl enable xrdp
 hide systemctl restart xrdp
+
+echo "xfce4-session" > /root/.xsession
+sed -i.bak '/fi/a xfce4-session' /etc/xrdp/startwm.sh
 
 # ---------- USER ----------
 USER="Insaan"
@@ -136,7 +139,7 @@ TS_IP=$(tailscale ip -4)
 
 echo
 echo "======================================"
-echo " RDP READY (24/7)"
+echo " RDP READY (XFCE - FAST)"
 echo " Address : $TS_IP"
 echo " Port    : 3389"
 echo " User    : Insaan"
